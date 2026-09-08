@@ -1,6 +1,7 @@
 export const AGED_BRIE = 'Aged Brie';
 export const BACKSTAGE_PASSES = 'Backstage passes to a TAFKAL80ETC concert';
 export const SULFURAS = 'Sulfuras, Hand of Ragnaros';
+export const CONJURED = 'Conjured Mana Cake';
 
 export class Item {
   name: string;
@@ -23,40 +24,79 @@ export class GildedRose {
 
   updateQuality() {
     for (const item of this.items) {
-      // Sulfuras is legendary: it never ages and is the documented exception to the
-      // 50 ceiling, so it stays out of reach of the helpers, which would clamp 80 to 50.
+      // Sulfuras is legendary: it never ages, and it is the documented exception to
+      // the 50 ceiling, so it must never reach the clamping helpers (80 would become 50).
       if (item.name === SULFURAS) {
         continue;
       }
 
-      if (item.name === AGED_BRIE) {
-        this.increaseQuality(item);
-      } else if (item.name === BACKSTAGE_PASSES) {
-        if (item.sellIn < 6) {
-          this.increaseQuality(item, 3);
-        } else if (item.sellIn < 11) {
-          this.increaseQuality(item, 2);
-        } else {
-          this.increaseQuality(item);
-        }
-      } else {
-        this.decreaseQuality(item);
-      }
-
+      // Quality first, while the item still has today's sell by date: every update*
+      // method reads sellIn before the decrement below.
+      this.updateItemQuality(item);
       this.decreaseSellIn(item);
-
-      if (item.sellIn < 0) {
-        if (item.name === AGED_BRIE) {
-          this.increaseQuality(item);
-        } else if (item.name === BACKSTAGE_PASSES) {
-          item.quality = 0;
-        } else {
-          this.decreaseQuality(item);
-        }
-      }
     }
 
     return this.items;
+  }
+
+  private updateItemQuality(item: Item): void {
+    if (item.name === AGED_BRIE) {
+      this.updateAgedBrie(item);
+      return;
+    }
+
+    if (item.name === BACKSTAGE_PASSES) {
+      this.updateBackstagePass(item);
+      return;
+    }
+
+    if (item.name === CONJURED) {
+      this.updateConjured(item);
+      return;
+    }
+
+    this.updateNormalItem(item);
+  }
+
+  private updateNormalItem(item: Item): void {
+    const degradation = this.hasExpired(item) ? 2 : 1;
+    this.decreaseQuality(item, degradation);
+  }
+
+  private updateAgedBrie(item: Item): void {
+    const maturation = this.hasExpired(item) ? 2 : 1;
+    this.increaseQuality(item, maturation);
+  }
+
+  private updateBackstagePass(item: Item): void {
+    if (this.hasExpired(item)) {
+      item.quality = 0;
+      return;
+    }
+
+    if (item.sellIn <= 5) {
+      this.increaseQuality(item, 3);
+      return;
+    }
+
+    if (item.sellIn <= 10) {
+      this.increaseQuality(item, 2);
+      return;
+    }
+
+    this.increaseQuality(item);
+  }
+
+  // Conjured is specified in GildedRoseRequirements.md but not implemented yet: it
+  // still ages like a normal item. This is the seam the doubled rate lands in.
+  private updateConjured(item: Item): void {
+    this.updateNormalItem(item);
+  }
+
+  // Quality is updated before sellIn is decremented, so the sell by date has already
+  // passed at sellIn <= 0 here — the legacy code tested sellIn < 0 after the decrement.
+  private hasExpired(item: Item): boolean {
+    return item.sellIn <= 0;
   }
 
   private decreaseSellIn(item: Item): void {

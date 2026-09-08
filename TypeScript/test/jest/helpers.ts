@@ -1,12 +1,10 @@
-import { Item, GildedRose, AGED_BRIE, BACKSTAGE_PASSES, SULFURAS } from '@/gilded-rose';
+import { Item, GildedRose, AGED_BRIE, BACKSTAGE_PASSES, SULFURAS, CONJURED } from '@/gilded-rose';
 
-// The three category names come from the production code so a rename there
-// breaks compilation instead of silently turning these tests into normal items.
-export { AGED_BRIE, BACKSTAGE_PASSES, SULFURAS };
+// The category names come from the production code so a rename there breaks
+// compilation instead of silently turning these tests into normal items.
+export { AGED_BRIE, BACKSTAGE_PASSES, SULFURAS, CONJURED };
 
 export const NORMAL = 'foo';
-// Conjured is specified but not implemented yet, so it has no production constant.
-export const CONJURED = 'Conjured Mana Cake';
 
 /**
  * Runs a single day on one item and hands back the mutated item.
