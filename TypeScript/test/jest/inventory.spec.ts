@@ -1,5 +1,5 @@
 import { Item, GildedRose } from '@/gilded-rose';
-import { NORMAL, AGED_BRIE, SULFURAS, BACKSTAGE, CONJURED } from './helpers';
+import { NORMAL, AGED_BRIE, SULFURAS, BACKSTAGE_PASSES, CONJURED } from './helpers';
 
 describe('An inventory with several items', () => {
   it('updates every item independently in a single call', () => {
@@ -7,7 +7,7 @@ describe('An inventory with several items', () => {
       new Item(NORMAL, 10, 20),
       new Item(AGED_BRIE, 2, 0),
       new Item(SULFURAS, 0, 80),
-      new Item(BACKSTAGE, 15, 20),
+      new Item(BACKSTAGE_PASSES, 15, 20),
       new Item(CONJURED, 3, 6),
     ]);
 

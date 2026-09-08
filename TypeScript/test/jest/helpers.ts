@@ -1,9 +1,11 @@
-import { Item, GildedRose } from '@/gilded-rose';
+import { Item, GildedRose, AGED_BRIE, BACKSTAGE_PASSES, SULFURAS } from '@/gilded-rose';
+
+// The three category names come from the production code so a rename there
+// breaks compilation instead of silently turning these tests into normal items.
+export { AGED_BRIE, BACKSTAGE_PASSES, SULFURAS };
 
 export const NORMAL = 'foo';
-export const AGED_BRIE = 'Aged Brie';
-export const SULFURAS = 'Sulfuras, Hand of Ragnaros';
-export const BACKSTAGE = 'Backstage passes to a TAFKAL80ETC concert';
+// Conjured is specified but not implemented yet, so it has no production constant.
 export const CONJURED = 'Conjured Mana Cake';
 
 /**
