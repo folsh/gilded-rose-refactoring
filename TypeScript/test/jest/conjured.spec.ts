@@ -1,11 +1,5 @@
 import { CONJURED, afterOneDay } from './helpers';
 
-/**
- * The "Conjured" category is specified in GildedRoseRequirements.md but is NOT
- * implemented yet in app/gilded-rose.ts: a conjured item is currently handled as a
- * normal one. These tests describe the TARGET behaviour and are therefore expected
- * to fail until the feature lands. They must not be weakened to match the legacy code.
- */
 describe('Conjured items', () => {
   it('degrades in quality twice as fast as a normal item', () => {
     const item = afterOneDay(CONJURED, 10, 20);

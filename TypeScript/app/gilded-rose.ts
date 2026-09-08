@@ -87,10 +87,11 @@ export class GildedRose {
     this.increaseQuality(item);
   }
 
-  // Conjured is specified in GildedRoseRequirements.md but not implemented yet: it
-  // still ages like a normal item. This is the seam the doubled rate lands in.
+  // Conjured items degrade twice as fast as normal ones, before and after the
+  // sell by date alike: the normal 1 / 2 rates simply doubled.
   private updateConjured(item: Item): void {
-    this.updateNormalItem(item);
+    const degradation = this.hasExpired(item) ? 4 : 2;
+    this.decreaseQuality(item, degradation);
   }
 
   // Quality is updated before sellIn is decremented, so the sell by date has already

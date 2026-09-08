@@ -25,8 +25,7 @@ describe('An inventory with several items', () => {
     expect(backstage.sellIn).toBe(14);
     expect(backstage.quality).toBe(21);
 
-    // Asserted last on purpose: the four implemented categories above are fully
-    // verified before this line fails. Turns green once Conjured is implemented.
+    // Conjured degrades at twice the normal rate: 6 - 2, not 6 - 1.
     expect(conjured.sellIn).toBe(2);
     expect(conjured.quality).toBe(4);
   });
