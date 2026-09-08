@@ -22,52 +22,52 @@ export class GildedRose {
   }
 
   updateQuality() {
-    for (let i = 0; i < this.items.length; i++) {
-      if (this.items[i].name != AGED_BRIE && this.items[i].name != BACKSTAGE_PASSES) {
-        if (this.items[i].quality > 0) {
-          if (this.items[i].name != SULFURAS) {
-            this.items[i].quality = this.items[i].quality - 1
-          }
+    for (const item of this.items) {
+      // Sulfuras is legendary: it never ages and is the documented exception to the
+      // 50 ceiling, so it stays out of reach of the helpers, which would clamp 80 to 50.
+      if (item.name === SULFURAS) {
+        continue;
+      }
+
+      if (item.name === AGED_BRIE) {
+        this.increaseQuality(item);
+      } else if (item.name === BACKSTAGE_PASSES) {
+        if (item.sellIn < 6) {
+          this.increaseQuality(item, 3);
+        } else if (item.sellIn < 11) {
+          this.increaseQuality(item, 2);
+        } else {
+          this.increaseQuality(item);
         }
       } else {
-        if (this.items[i].quality < 50) {
-          this.items[i].quality = this.items[i].quality + 1
-          if (this.items[i].name == BACKSTAGE_PASSES) {
-            if (this.items[i].sellIn < 11) {
-              if (this.items[i].quality < 50) {
-                this.items[i].quality = this.items[i].quality + 1
-              }
-            }
-            if (this.items[i].sellIn < 6) {
-              if (this.items[i].quality < 50) {
-                this.items[i].quality = this.items[i].quality + 1
-              }
-            }
-          }
-        }
+        this.decreaseQuality(item);
       }
-      if (this.items[i].name != SULFURAS) {
-        this.items[i].sellIn = this.items[i].sellIn - 1;
-      }
-      if (this.items[i].sellIn < 0) {
-        if (this.items[i].name != AGED_BRIE) {
-          if (this.items[i].name != BACKSTAGE_PASSES) {
-            if (this.items[i].quality > 0) {
-              if (this.items[i].name != SULFURAS) {
-                this.items[i].quality = this.items[i].quality - 1
-              }
-            }
-          } else {
-            this.items[i].quality = this.items[i].quality - this.items[i].quality
-          }
+
+      this.decreaseSellIn(item);
+
+      if (item.sellIn < 0) {
+        if (item.name === AGED_BRIE) {
+          this.increaseQuality(item);
+        } else if (item.name === BACKSTAGE_PASSES) {
+          item.quality = 0;
         } else {
-          if (this.items[i].quality < 50) {
-            this.items[i].quality = this.items[i].quality + 1
-          }
+          this.decreaseQuality(item);
         }
       }
     }
 
     return this.items;
+  }
+
+  private decreaseSellIn(item: Item): void {
+    item.sellIn--;
+  }
+
+  private increaseQuality(item: Item, amount = 1): void {
+    item.quality = Math.min(50, item.quality + amount);
+  }
+
+  private decreaseQuality(item: Item, amount = 1): void {
+    item.quality = Math.max(0, item.quality - amount);
   }
 }
